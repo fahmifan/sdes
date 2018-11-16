@@ -28,6 +28,7 @@ const permut = (token, perm) => {
     return newToken
 }
 
+// left shift 1 of Array
 const ls1 = (keys) => {
     if(keys.length <= 0) return []
 
@@ -41,6 +42,7 @@ const ls1 = (keys) => {
     return newKey
 }
 
+// left shift 2 of Array
 const ls2 = (keys) => {
     if(keys.length <= 0) return []
 
@@ -154,6 +156,12 @@ export const fk = (key, l0, r0) => {
     return c5
 }
 
+/**
+ * 
+ * @param plainText :Array
+ * @param k1 :Array
+ * @param k2 : Array
+ */
 const sdes = (plainText, k1, k2) => {
     // init permutation 
     const permToken = permut(plainText, IP)
