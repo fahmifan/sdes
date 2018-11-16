@@ -1,0 +1,22 @@
+{
+  "name": "sdes",
+  "version": "1.0.0",
+  "description": "implementation of simplified data encrpytion standard",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miun173/sdes.git"
+  },
+  "keywords": [
+    "sdes"
+  ],
+  "author": "miun173",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/miun173/sdes/issues"
+  },
+  "homepage": "https://github.com/miun173/sdes#readme"
+}
