@@ -5,12 +5,14 @@ const P4 = [2, 4, 3, 1]
 const IP = [2, 6, 3, 1, 4, 8, 5, 7]
 const IPinv = [4, 1, 3, 5, 7, 2, 8, 6]
 const EP = [4, 1, 2, 3, 2, 3, 4, 1]
-const PT = [0, 0, 1, 1, 1, 0, 0, 0]
 
 // Array[row][column] in array
 const S0 = [[1, 0, 3, 2], [3, 2, 1, 0], [0, 2, 1, 3], [3, 1, 3, 2]]
 // Array[row][column] in array
 const S1 = [[0, 1, 2, 3], [2, 0, 1, 3], [3, 0, 1, 0], [2, 1, 0, 3]]
+
+// a binary xor output 0 or 1
+const binXor = (a, b) =>  a !== b ? 1 : 0
 
 // permutate a key to perm
 const permut = (token, perm) => {
@@ -53,7 +55,7 @@ const ls2 = (keys) => {
     return newKey
 }
 
-// generate [k1, k2]
+// generate array of key: [k1, k2]
 export const keyGen = (key) => {
     const perm10 = permut(key, P10)
     let l0 = perm10.slice(0, 5) // left
@@ -80,11 +82,11 @@ export const keyGen = (key) => {
     return {"k1": k1, "k2": k2}
 }
 
-// a binary xor output 0 or 1
-const binXor = (a, b) => {
-    return a !== b ? 1 : 0
-}
-
+/**
+ * function sbox return a sbox value from a token
+ * @param token :Array
+ * @param matrix :2D-Array
+ */
 const sbox = (token, matrix) => {
     const rn = Number.parseInt(token[0] + "" + token[3], 2) // row number
     const cn = Number.parseInt(token[1] + "" + token[2], 2) // column number
@@ -114,7 +116,7 @@ export const fk = (key, l0, r0) => {
     else if(r0.length <= 0) return
     else if(l0.length !== r0.length) return
     
-    console.log("\nstart fk ==========>\n")
+    console.log("\nstart fk ============================================>\n")
     
     // this should be an array with length 8
     const c0 = permut(r0, EP)
@@ -125,50 +127,53 @@ export const fk = (key, l0, r0) => {
 
     const l1 = c1.slice(0, 4)
     console.log("l1", l1)
+
     const l2 = sbox(l1, S0)
     console.log("l2", l2)
 
     const r1 = c1.slice(4, 8)
     console.log("\n\nr1", r1)
+    
     const r2 = sbox(r1, S1)
     console.log("r2", r2)
 
     const c2 = l2.concat(r2)
+    console.log("c2", c2)
+
     const c3 = permut(c2, P4)
     console.log("c3", c3)
 
     const c4 = c3.map((el, i) => binXor(el, l0[i]))
     console.log("c4", c4)
 
-    console.log("\nend fk ===========>\n")
-
     const c5 = {"left": c4, right: r0}
     console.log("c5", c5)
+
+    console.log("\nend fk ============================================>\n")
 
     return c5
 }
 
-export const sdes = (plainText, k1, k2) => {
+const sdes = (plainText, k1, k2) => {
     // init permutation 
     const permToken = permut(plainText, IP)
 
     // split  plainText into 2: left & right
     const l0 = permToken.slice(0, 4)
     console.log("l0", l0)
+    
     const r0 = permToken.slice(4, 8)
     console.log("r0", r0)
     
-    const it1 = fk(k1, l0, r0)
-    console.log("it1", it1)
-
+    const { left, right } = fk(k1, l0, r0)
     // switch the l0 and r0 that pass as params
-    const it2 = fk(k2, it1.right, it1.left)
-    console.log("it2", it2)
+    const it2 = fk(k2, right, left)
 
     const c0 = it2.left.concat(it2.right)
 
     const cipherText = permut(c0, IPinv)
-    console.log("cipherText", cipherText)
-
+    
     return cipherText.join("")
 }
+
+export default sdes
