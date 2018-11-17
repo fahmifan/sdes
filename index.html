@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>S-DES</title>
+
+    <style>
+        body {
+            margin: auto;
+            width: 75%;
+        }
+        .field {
+            margin: auto;
+            padding: 1rem;
+        }
+        .container {
+            margin: auto;
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .title {
+            margin: auto;
+            text-align: center;
+        }
+
+        #chiperText {
+            display: inline;
+        }
+        #btnEncrpyt {
+            margin: auto;
+            margin-top: 1rem;
+            padding-right: 1rem;
+            padding-left: 1rem;
+            width: 181px;
+        }
+    </style>
+
+</head>
+<body>
+    <header class="title">
+        <h1>S-DES</h1>
+        <p>Simplified Data Encryption Standard</p>
+        <hr>
+    </header>
+
+    <main class="container">
+
+        <div class="field">
+            <label for="mkey">Master Key (10 bit biner)</label> <br>
+            <input type="number" name="mkey" id="mkey" value="00010011101"> 
+        </div>
+
+        <div class="field">
+            <label for="plaintext">Palin Text (8 bit biner)</label> <br>
+            <input type="number" name="plaintext" id="plaintext" value="00111000">
+        </div>
+
+        <button id="btnEncrpyt">encrypt!</button>
+
+        <div class="field">
+            <label for="chiperText">Chiper Text: </label>
+            <p id="chiperText"></p>
+        </div>
+
+    </main>
+
+    <script type="module">
+        import sdes, { keyGen } from "./sdes/sdes.js"
+
+        document.addEventListener('DOMContentLoaded',function() {
+            // query id mkey & plaintext
+            document.getElementById("btnEncrpyt").onclick = encrpyt
+        }, false)
+        
+        const encrpyt = (event) => {
+            const mkey = (document.getElementById("mkey")).value
+            const pt = (document.getElementById("plaintext")).value
+
+            console.log("mkey", mkey)
+            console.log("pt", pt)
+
+            // validasi dulu
+            const binMkey = mkey.split("").map(el => parseInt(el, 2))
+            console.log("binMkey", binMkey)
+
+            const binPt = pt.split("").map(el => parseInt(el, 2))
+            console.log("binPt", binPt)
+
+            const { k1, k2 } = keyGen(binMkey)
+
+            console.log("\nk1", k1)
+            console.log("k2", k2)
+
+            const ct = sdes(binPt, k1, k2)
+            console.log("chiperText", ct)
+
+            const chiperText = (document.getElementById("chiperText")) 
+            chiperText.innerHTML = ct
+        }        
+
+    </script>
+</body>
+</html>
