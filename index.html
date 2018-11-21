@@ -11,12 +11,17 @@
             margin: auto;
             width: 75%;
         }
+        td {
+            padding: 0.5rem;
+        }
+
         .field {
             margin: auto;
-            padding: 1rem;
+            padding-top: 1rem;
         }
         .container {
             margin: auto;
+            box-sizing: border-box;
             width: 80%;
             display: flex;
             flex-direction: column;
@@ -36,6 +41,7 @@
             padding-right: 1rem;
             padding-left: 1rem;
             width: 181px;
+            box-sizing: border-box;
         }
     </style>
 
@@ -59,11 +65,80 @@
             <input type="number" name="plaintext" id="plaintext" value="00111000">
         </div>
 
-        <button id="btnEncrpyt">encrypt!</button>
-
         <div class="field">
-            <label for="chiperText">Chiper Text: </label>
-            <p id="chiperText"></p>
+            <button id="btnEncrpyt">encrypt!</button>
+        </div>
+
+        <div id="stepField" class="field">
+            <h3>Step to encrpyt data</h3>
+            <hr>
+            <div id="encrypt-step"></div>
+            
+            <div>
+                <p><b>1. Keygen</b></p>
+                <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span>P10</span>
+                        </td>
+                        <td>
+                            <span id="p10_value">[3 5 2 7 4 10 1 9 8 6]</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>P10 Input</span> 
+                        </td>
+                        <td>
+                            <span id="p10_input"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>P10 Output</span> 
+                        </td>
+                        <td>
+                            <span id="p10_output"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>P10 Left</td>
+                        <td id="p10_l"></td>
+                    </tr>
+                    <tr>
+                        <td>P10 Right</td>
+                        <td id="p10_r"></td>
+                    </tr>
+                    <tr>
+                        <td>P8(P10 Left) = K1</td>
+                        <td>
+                            <span id="key1"></span> <br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>P8(P10 Right) = K2</td>
+                        <td>
+                            <span id="key2"></span> <br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="chiperText"><b>Chiper Text </b></label>
+                        </td>
+                        <td>
+                            <b><p id="chiperText"></p></b>
+                        </td>
+                    </tr>
+                </tbody>
+                </table>
+
+                <p><em>For full log see in developer tools console tab</em></p>
+            </div>
+
+            <div>
+
+            </div>
         </div>
 
     </main>
@@ -72,11 +147,19 @@
         import sdes, { keyGen } from "./sdes/sdes.js"
 
         document.addEventListener('DOMContentLoaded',function() {
+            const stepField = document.getElementById("stepField")
+            stepField.style.display = "none"
+
             // query id mkey & plaintext
             document.getElementById("btnEncrpyt").onclick = encrpyt
         }, false)
         
         const encrpyt = (event) => {
+            const stepField = document.getElementById("stepField")
+            stepField.style.display = "block"
+
+            const encryptStep = document.getElementById("encrypt-step");
+            
             const mkey = (document.getElementById("mkey")).value
             const pt = (document.getElementById("plaintext")).value
 
@@ -87,19 +170,36 @@
             const binMkey = mkey.split("").map(el => parseInt(el, 2))
             console.log("binMkey", binMkey)
 
+            const p10_input = document.getElementById("p10_input");
+            p10_input.innerHTML = "[" + binMkey.join(" ") + "]"
+
             const binPt = pt.split("").map(el => parseInt(el, 2))
             console.log("binPt", binPt)
 
-            const { k1, k2 } = keyGen(binMkey)
+            const { k1, k2, p10Val, p10R, p10L } = keyGen(binMkey)
+            const p10_output = document.getElementById("p10_output");
+            p10_output.innerHTML = "[" + p10Val.join(" ") + "]"
 
             console.log("\nk1", k1)
             console.log("k2", k2)
+
+            const key1 = document.getElementById("key1")
+            key1.innerHTML = "[" + k1.join(" ") + "]"
+
+            const key2 = document.getElementById("key2")
+            key2.innerHTML = "[" + k2.join(" ") + "]"
+
+            const p10_l = document.getElementById("p10_l")
+            p10_l.innerHTML = "[" + p10L.join(" ") + "]"
+
+            const p10_r = document.getElementById("p10_r")
+            p10_r.innerHTML = "[" + p10R.join(" ") + "]"
 
             const ct = sdes(binPt, k1, k2)
             console.log("chiperText", ct)
 
             const chiperText = (document.getElementById("chiperText")) 
-            chiperText.innerHTML = ct
+            chiperText.innerHTML = "[" + ct.split("").join(" ") + "]"
         }        
 
     </script>

@@ -81,7 +81,13 @@ export const keyGen = (key) => {
     const k2 = permut(l2.concat(r2), P8)
     console.log("k2", k2) 
 
-    return {"k1": k1, "k2": k2}
+    return {
+        "k1": k1, 
+        "k2": k2, 
+        "p10Val": perm10, 
+        "p10L": l0, 
+        "p10R": r0,
+    }
 }
 
 /**
