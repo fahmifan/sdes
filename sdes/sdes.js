@@ -123,9 +123,7 @@ export const fk = (key, l0, r0) => {
     else if(l0.length <= 0) return
     else if(r0.length <= 0) return
     else if(l0.length !== r0.length) return
-    
-    console.log("\nstart fk ============================================>\n")
-    
+        
     // this should be an array with length 8
     const c0 = permut(r0, EP)
     console.log("c0", c0)
@@ -137,27 +135,25 @@ export const fk = (key, l0, r0) => {
     console.log("l1", l1)
 
     const l2 = sbox(l1, S0)
-    console.log("l2", l2)
+    console.log("S0(l1) = l2", l2)
 
     const r1 = c1.slice(4, 8)
     console.log("\n\nr1", r1)
     
     const r2 = sbox(r1, S1)
-    console.log("r2", r2)
+    console.log("S1(r1) = r2", r2)
 
     const c2 = l2.concat(r2)
     console.log("c2", c2)
 
     const c3 = permut(c2, P4)
-    console.log("c3", c3)
+    console.log("P4(c2) = c3", c3)
 
     const c4 = c3.map((el, i) => binXor(el, l0[i]))
-    console.log("c4", c4)
+    console.log("c3 xor l0 = c4", c4)
 
-    const c5 = {"left": c4, right: r0}
+    const c5 = {"left": c4, "right": r0}
     console.log("c5", c5)
-
-    console.log("\nend fk ============================================>\n")
 
     return c5
 }
@@ -179,9 +175,14 @@ const sdes = (plainText, k1, k2) => {
     const r0 = permToken.slice(4, 8)
     console.log("r0", r0)
     
+    console.log("\n\nstart fk (1) ===================================================================>\n")
     const { left, right } = fk(k1, l0, r0)
+    console.log("\nend fk ========================================================================>\n\n")
+
+    console.log("\n\nstart fk (2) ===================================================================>\n")
     // switch the l0 and r0 that pass as params
     const it2 = fk(k2, right, left)
+    console.log("\nend fk ========================================================================>\n\n")
 
     const c0 = it2.left.concat(it2.right)
 
